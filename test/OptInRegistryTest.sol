@@ -8,6 +8,6 @@ contract OptInRegistryTest is Test {
     OptInRegistry public optIn;
 
     function setUp() public {
-        optIn = new OptInRegistry();
+        optIn = new OptInRegistry(address(0), "default");
     }
 }

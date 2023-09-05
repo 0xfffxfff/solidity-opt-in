@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
+import {Ownable} from "lib/solady/src/auth/Ownable.sol";
+
 interface IERC721 {
     function ownerOf(uint256 tokenId) external view returns (address owner);
 }
 
 contract OptInRegistry is Ownable {
 
-    event OptionAdded(address indexed tokenOwner, string endpoint);
+    event OptionAdded(address indexed tokenOwner, string indexed option);
 
     address public tokenContract;
-    string public defaultString;
+    string public defaultOption;
     uint256 optionCount;
     mapping(uint256 => string) public optionStrings;
     mapping(uint256 => uint256) public activeOptions;
@@ -18,17 +20,17 @@ contract OptInRegistry is Ownable {
     mapping(uint256 => uint256) public endorsements;
     mapping(address => uint256) public addressToEndorsement;
 
-    constructor (address _tokenContract, string memory _defaultEndpoint) {
+    constructor (address _tokenContract, string memory _defaultOption) {
         tokenContract = _tokenContract;
-        defaultEndpoint = _defaultEndpoint;
+        defaultOption = _defaultOption;
     }
 
     /*//////////////////////////////////////////////////////////////
                                 Owner
     //////////////////////////////////////////////////////////////*/
 
-    function setDefaultString(string memory _defaultEndpoint) public onlyOwner {
-        defaultEndpoint = _defaultEndpoint;
+    function setDefaultOption(string memory _defaultOption) public onlyOwner {
+        defaultOption = _defaultOption;
     }
 
     // function setTokenContract(address _tokenContract) public onlyOwner {
@@ -86,7 +88,7 @@ contract OptInRegistry is Ownable {
         if (activeOptions[_tokenId] > 0 && bytes(optionStrings[activeOptions[_tokenId]]).length > 0) {
             return optionStrings[activeOptions[_tokenId]];
         } else {
-            return defaultString;
+            return defaultOption;
         }
     }
 
